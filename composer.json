@@ -1,0 +1,32 @@
+{
+  "name": "aengine/orchid-database",
+  "description": "Database extension for Orchid Framework",
+  "keywords": [
+    "php",
+    "framework",
+    "AEngine",
+    "Orchid",
+    "Database",
+    "PDO"
+  ],
+  "homepage": "https://dev.aengine.ru/AEngine/Orchid-Database",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Aleksey Ilyin",
+      "email": "alksily@aengine.ru",
+      "homepage": "http://aengine.ru/",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=7.0",
+    "aengine/orchid": "~0.3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "AEngine\\Database\\": "src/"
+    },
+    "files": ["src/Db.php"]
+  }
+}
