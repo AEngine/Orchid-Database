@@ -1,6 +1,6 @@
 <?php
 
-use AEngine\Database\Exception\DatabaseException;
+use AEngine\Orchid\Database\Exception\DatabaseException;
 
 /**
  * Db is wrap around PDO with support Master-Slave random select server

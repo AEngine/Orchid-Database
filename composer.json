@@ -25,7 +25,7 @@
   },
   "autoload": {
     "psr-4": {
-      "AEngine\\Database\\": "src/"
+      "AEngine\\Orchid\\Database\\": "src/"
     },
     "files": ["src/Db.php"]
   }
