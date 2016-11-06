@@ -84,20 +84,17 @@ class Db
         $role = $use_master ? 'master' : 'slave';
 
         switch (true) {
-            case !empty(static::$connection[$role]): {
+            case !empty(static::$connection[$role]):
                 $pool = static::$connection[$role];
                 break;
-            }
-            case !empty(static::$connection['master']): {
+            case !empty(static::$connection['master']):
                 $pool = static::$connection['master'];
                 $role = 'master';
                 break;
-            }
-            case !empty(static::$connection['slave']): {
+            case !empty(static::$connection['slave']):
                 $pool = static::$connection['slave'];
                 $role = 'slave';
                 break;
-            }
         }
 
         if ($pool) {
