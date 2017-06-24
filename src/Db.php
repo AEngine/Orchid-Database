@@ -67,7 +67,7 @@ class Db
             return;
         }
 
-        throw new RuntimeException('There are no settings to connect to the memory');
+        throw new RuntimeException('There are no settings to connect to the database');
     }
 
     /**
