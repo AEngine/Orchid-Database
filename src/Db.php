@@ -30,7 +30,6 @@ class Db
      * @param array $configs
      *
      * @throws RuntimeException
-     * @throws DatabaseException
      */
     public static function setup(array $configs = [])
     {
@@ -119,11 +118,11 @@ class Db
      */
     public static function query($query, array $params = [], $use_master = false)
     {
-        // obtain connection
-        static::$lastConnection = static::getConnection(
-            !$use_master ? (strncmp($query, 'SELECT', 6) || strncmp($query, '(SELECT', 6)) : true
-        );
+        $query = trim($query);
+        $use_master = $use_master === true ? true : (strncmp($query, 'SELECT', 6) || strncmp($query, '(SELECT', 6));
 
+        // obtain connection
+        static::$lastConnection = static::getConnection($use_master);
         static::$lastQuery = static::$lastConnection->prepare($query);
         static::$lastQuery->execute($params);
 
