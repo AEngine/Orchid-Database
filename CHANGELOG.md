@@ -3,7 +3,11 @@
 The latest version of this file can be found at the master branch of the
 Orchid-Database repository.
 
-## 1.0.2 (2017-12-02)
+## 1.0.3 (2017-12-23)
+- Add trim query
+- Update composer file
+
+### 1.0.2 (2017-12-02)
 - Update dependency
 
 ### 1.0.1 (2017-06-24)
