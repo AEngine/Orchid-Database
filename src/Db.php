@@ -35,17 +35,18 @@ class Db
     {
         if ($configs) {
             $default = [
-                'dsn'      => '',
-                'username' => '',
-                'password' => '',
-                'options'  => [],
-                'role'     => 'master',
+                'dsn'       => '',
+                'username'  => '',
+                'password'  => '',
+                'options'   => [],
+                'role'      => 'master',
+                'pool_name' => 'default',
             ];
 
             foreach ($configs as $index => $config) {
                 $config = array_merge($default, $config);
 
-                static::$connection[$config['role'] == 'master' ? 'master' : 'slave'][] = function () use ($config) {
+                static::$connection[$config['pool_name']][$config['role'] == 'master' ? 'master' : 'slave'][] = function () use ($config) {
                     try {
                         return new PDO(
                             $config['dsn'],
@@ -72,39 +73,41 @@ class Db
     /**
      * Returns PDO object
      *
-     * @param bool $use_master
+     * @param bool   $use_master
+     * @param string $pool_name
      *
      * @return PDO
-     * @throws UnexpectedValueException
+     * @throws DatabaseException
      */
-    public static function getConnection($use_master = false)
+    public static function getConnection($use_master = false, $pool_name = 'default')
     {
         $pool = [];
         $role = $use_master ? 'master' : 'slave';
 
         switch (true) {
-            case !empty(static::$connection[$role]):
-                $pool = static::$connection[$role];
+            case !empty(static::$connection[$pool_name][$role]):
+                $pool = static::$connection[$pool_name][$role];
                 break;
-            case !empty(static::$connection['master']):
-                $pool = static::$connection['master'];
+            case !empty(static::$connection[$pool_name]['master']):
+                $pool = static::$connection[$pool_name]['master'];
                 $role = 'master';
                 break;
-            case !empty(static::$connection['slave']):
-                $pool = static::$connection['slave'];
+            case !empty(static::$connection[$pool_name]['slave']):
+                $pool = static::$connection[$pool_name]['slave'];
                 $role = 'slave';
                 break;
         }
 
         if ($pool) {
             if (is_array($pool)) {
-                return static::$connection[$role] = $pool[array_rand($pool)]();
+                return static::$connection[$pool_name][$role] = $pool[array_rand($pool)]();
             } else {
+                /** @var PDO $pool */
                 return $pool;
             }
         }
 
-        throw new UnexpectedValueException('Unable to establish connection');
+        throw new UnexpectedValueException('Unable to establish connection for current pool');
     }
 
     /**
@@ -113,20 +116,70 @@ class Db
      * @param string $query
      * @param array  $params
      * @param bool   $use_master
+     * @param string $pool_name
      *
      * @return PDOStatement
+     * @throws DatabaseException
      */
-    public static function query($query, array $params = [], $use_master = false)
+    public static function query(String $query, array $params = [], $use_master = false, $pool_name = 'default')
     {
-        $query = trim($query);
-        $use_master = $use_master === true ? true : (strncmp($query, 'SELECT', 6) || strncmp($query, '(SELECT', 6));
+        static::$lastConnection = static::getConnection($use_master, $pool_name); // obtain connection
+        static::$lastQuery      = static::$lastConnection->prepare($query);
 
-        // obtain connection
-        static::$lastConnection = static::getConnection($use_master);
-        static::$lastQuery = static::$lastConnection->prepare($query);
         static::$lastQuery->execute($params);
 
         return static::$lastQuery;
+    }
+
+    /**
+     * Executing a select query and returning rows
+     *
+     * @param string $query
+     * @param array  $params
+     * @param string $pool_name
+     * @param int    $fetch_mode
+     *
+     * @return array
+     * @throws DatabaseException
+     */
+    public static function select($query, array $params = [], $pool_name = 'default', $fetch_mode = PDO::FETCH_ASSOC)
+    {
+        return static::query($query, $params, false, $pool_name)->fetchAll($fetch_mode);
+    }
+
+    /**
+     * Executing a select query and returning a single line
+     *
+     * @param string $query
+     * @param array  $params
+     * @param string $pool_name
+     * @param int    $fetch_mode
+     *
+     * @return array
+     * @throws DatabaseException
+     */
+    public static function selectOne($query, array $params = [], $pool_name = 'default', $fetch_mode = PDO::FETCH_ASSOC)
+    {
+        $records = static::select($query, $params, $pool_name, $fetch_mode);
+
+        return array_shift($records);
+    }
+
+    /**
+     * Execute the query and return the number of affected rows
+     *
+     * @param string $query
+     * @param array  $params
+     * @param string $pool_name
+     *
+     * @return int
+     * @throws DatabaseException
+     */
+    public static function affect($query, array $params = [], $pool_name = 'default')
+    {
+        $sth = static::query($query, $params, true, $pool_name);
+
+        return $sth->rowCount();
     }
 
     /**

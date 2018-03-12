@@ -16,14 +16,16 @@ Connect to the server
 ```php
 Db::setup([
     [
-        'dsn'      => 'mysql:host=HOST;dbname=DB-NAME',
-        'username' => 'USERNAME',
-        'password' => 'PASSWORD',
-        // additional can be passed options and the server-role:
-        // 'option'   => [
+        'dsn'           => 'mysql:host=HOST;dbname=DB-NAME',
+        'username'      => 'USERNAME',
+        'password'      => 'PASSWORD',
+        // additional can be passed options, server-role and pool name:
+        // 'option'     => [
         //     PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'",
+        //     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         // ],
-        // 'role'  => 'master', // or slave
+        // 'role'       => 'master', // or slave
+        // 'pool_name'  => 'default', // pool list of connections
     ],
     // possible another connection config
     // for the implementation of master-slave
@@ -38,4 +40,21 @@ while ($a = $stm->fetch(PDO::FETCH_ASSOC)) {
     // some action
     pre($a);
 }
+```
+
+#### Aliases
+
+Select rows
+```php 
+$list = Db::select('SELECT * FROM `products` WHERE `price` >= 150');
+```
+
+Select first element of array from `Db::select`
+```php 
+$first = Db::selectOne('SELECT * FROM `products` WHERE `price` >= 150');
+```
+
+Affect row and return count of affected
+```php 
+$affected = Db::affect('INSERT INTO `products` SET `name` = "Socks with owls", `price` = 200');
 ```

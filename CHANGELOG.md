@@ -3,7 +3,11 @@
 The latest version of this file can be found at the master branch of the
 Orchid-Database repository.
 
-## 1.0.3 (2017-12-23)
+## 1.0.4 (2018-03-12)
+- Add methods `select`, `selectOne` and `affect`
+- Add parameter `pool_name`
+
+### 1.0.3 (2017-12-23)
 - Add trim query
 - Update composer file
 
