@@ -77,7 +77,7 @@ class Db
      * @param string $pool_name
      *
      * @return PDO
-     * @throws DatabaseException
+     * @throws UnexpectedValueException
      */
     public static function getConnection($use_master = false, $pool_name = 'default')
     {
@@ -119,7 +119,6 @@ class Db
      * @param string $pool_name
      *
      * @return PDOStatement
-     * @throws DatabaseException
      */
     public static function query(String $query, array $params = [], $use_master = false, $pool_name = 'default')
     {
@@ -140,7 +139,6 @@ class Db
      * @param int    $fetch_mode
      *
      * @return array
-     * @throws DatabaseException
      */
     public static function select($query, array $params = [], $pool_name = 'default', $fetch_mode = PDO::FETCH_ASSOC)
     {
@@ -156,7 +154,6 @@ class Db
      * @param int    $fetch_mode
      *
      * @return array
-     * @throws DatabaseException
      */
     public static function selectOne($query, array $params = [], $pool_name = 'default', $fetch_mode = PDO::FETCH_ASSOC)
     {
@@ -173,7 +170,6 @@ class Db
      * @param string $pool_name
      *
      * @return int
-     * @throws DatabaseException
      */
     public static function affect($query, array $params = [], $pool_name = 'default')
     {
