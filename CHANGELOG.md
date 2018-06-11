@@ -3,7 +3,10 @@
 The latest version of this file can be found at the master branch of the
 Orchid-Database repository.
 
-## 1.0.4 (2018-03-18)
+## 1.0.5 (2018-06-11)
+- Remove dependency from aengine/orchid-core
+
+### 1.0.4 (2018-03-18)
 - Add methods `select`, `selectOne` and `affect`
 - Add parameter `pool_name`
 
