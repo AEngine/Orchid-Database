@@ -1,7 +1,6 @@
-# Orchid-Database changelog
+# Changelog
 
-The latest version of this file can be found at the master branch of the
-Orchid-Database repository.
+The latest version of this file can be found at the master branch of the this repository.
 
 ## 1.0.5 (2018-06-11)
 - Remove dependency from aengine/orchid-core
